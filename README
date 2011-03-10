@@ -1,0 +1,23 @@
+tweetarchive: lightweight, pythonic twitter archiving.
+-----------------------------------------------------------------------
+
+* uses the tweepy library with oauth for protected accounts
+* only archives tweets created since last time
+* writes CSV output with user-specified format
+* uses time delays to avoid hitting load throttling
+
+REQUIREMENTS
+-----------------------------------------------------------------------
+
+* tweepy
+   - for twitter API access
+     https://github.com/joshthecoder/tweepy
+* BeautifulSoup
+   - for conversion to ASCII and HTML entity removal
+     http://www.crummy.com/software/BeautifulSoup/
+  
+USAGE
+
+-----------------------------------------------------------------------
+* modify settings.py
+* ./tweetarchive.py [username]
