@@ -39,7 +39,7 @@ def main():
 			reader = csv.reader(fd)
 			row = list(reader)[-1]
 			settings.archive_last_id = row[settings.archive_attributes.index("id")]
-			print " - will seek up to ID %s" % settings.archive_last_id
+			print " - existing archive found, seeking up to ID %s" % settings.archive_last_id
 			fd.close()
 		except:
 			pass
@@ -76,7 +76,11 @@ def twitter_statuses(api, user = "ideoforms", count = float('inf'), last_id = No
 	print "fetching %d of %d statuses" % (count, statuses_count)
 	try:
 		while len(statuses) < count:
-			results = api.user_timeline(user, page = page)
+			try:
+				results = api.user_timeline(user, page = page)
+			except:
+				print " - fetch failed (might have hit request limit, try using oauth settings)"
+				break
 
 			if not results:
 				break
@@ -86,7 +90,6 @@ def twitter_statuses(api, user = "ideoforms", count = float('inf'), last_id = No
 			for status in results:
 				# pprint.pprint(vars(status))
 				if last_id is not None and str(status.id) == last_id:
-					print "found last tweet ID %s" % last_id
 					count = 0
 					break
 				try:
@@ -105,7 +108,7 @@ def twitter_statuses(api, user = "ideoforms", count = float('inf'), last_id = No
 		print "terminated (fetched %d/%d statuses)" % (len(statuses), statuses_count)
 		pass
 
-	print "all done."
+	print "finished (found %d new tweets)" % len(statuses)
 
 	statuses.reverse()
 	return statuses
