@@ -10,7 +10,7 @@ archive_filename = "%s.csv"
 archive_attributes = [ "id", "created_at", "retweet_count", "text_ascii" ]
 
 # delay between fetching individual pages of tweets
-wait = 0.5
+wait = 2.0
 
 # oauth settings
 # needed for protected accounts, and to avoid load throttling
