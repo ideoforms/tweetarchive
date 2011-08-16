@@ -16,15 +16,16 @@ import sys
 import time
 import tweepy
 import pprint
+import getopt
 import settings
 try:
 	from BeautifulSoup import BeautifulStoneSoup
 except:
 	print "couldn't import BeautifulStoneSoup (no ASCII or HTML entity conversion available)"
 
-def main():
-	if len(sys.argv) > 1:
-		settings.archive_username = sys.argv[1]
+def main(args):
+	if len(args) > 0:
+		settings.archive_username = args[0]
 	if "%s" in settings.archive_filename:
 		settings.archive_filename = settings.archive_filename % settings.archive_username
 
@@ -114,5 +115,25 @@ def twitter_statuses(api, user = "ideoforms", count = float('inf'), last_id = No
 	return statuses
 
 if __name__ == "__main__":
-	main()
+	""" first, parse command-line arguments """
+	args = sys.argv[1:]
+
+	opts, args = getopt.getopt(args, "hu:f:w:")
+	for key, value in opts:
+		if key == "-h":
+			print "Usage: %s [-h] [-u <username>] [-f <filename>] [-w <wait>]" % (sys.argv[0])
+			print ""
+			print "  -h  show this help"
+			print "  -u  username to archive"
+			print "  -f  filename to archive to"
+			print "  -w  delay time between fetching each page"
+			sys.exit(1)
+		elif key == "-u":
+			settings.archive_username = value
+		elif key == "-f":
+			settings.archive_filename = value
+		elif key == "-w":
+			settings.wait = float(value)
+	
+	main(args)
 
