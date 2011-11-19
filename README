@@ -11,7 +11,7 @@ REQUIREMENTS
 
 * tweepy
    - for twitter API access
-     https://github.com/joshthecoder/tweepy
+     https://github.com/tweepy/tweepy
 * BeautifulSoup
    - for conversion to ASCII and HTML entity removal
      http://www.crummy.com/software/BeautifulSoup/
