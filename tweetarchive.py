@@ -11,17 +11,22 @@ __license__ = 'MIT'
 
 
 import os
+import re
 import csv
 import sys
 import time
 import tweepy
 import pprint
 import getopt
+import httplib
+import urlparse
 import settings
 try:
 	from BeautifulSoup import BeautifulStoneSoup
 except:
 	print "couldn't import BeautifulStoneSoup (no ASCII or HTML entity conversion available)"
+
+resolve_shorturl_regexes = map(lambda host: re.compile(r"https?://%s/[\w-]+" % host.replace('.', '\\.')), settings.resolve_shorturls)
 
 def main(args):
 	if len(args) > 0:
@@ -96,6 +101,7 @@ def twitter_statuses(api, user = "ideoforms", count = float('inf'), last_id = No
 				try:
 					unescaped = unicode(BeautifulStoneSoup(status.text, convertEntities = BeautifulStoneSoup.HTML_ENTITIES))
 					ascii = unescaped.encode('ascii', 'ignore')
+					ascii = resolve_urls(ascii)
 					status.text_ascii = ascii
 				except:
 					pass
@@ -113,6 +119,37 @@ def twitter_statuses(api, user = "ideoforms", count = float('inf'), last_id = No
 
 	statuses.reverse()
 	return statuses
+
+def resolve_urls(string):
+	"""Searches a string for URLs on a specific hostname (usually link-shorterning URLs)
+	and tries to resolve them, returning a modified string."""
+	for re in resolve_shorturl_regexes:
+		# find all matches, add each one to the map of urls to resolve as "a":"a"
+		while True:
+			amatch = re.search(string)
+			if not amatch: break
+			urlfrm = string[amatch.start():amatch.end()]
+			urltoo = urlfrm
+			iterdepth = 0
+			while any(re.match(urltoo) for re in resolve_shorturl_regexes):
+				iterdepth += 1
+				if iterdepth == 10:
+					print "Warning: too many redirects, giving up resolving %s" % urlfrm
+					urltoo = urlfrm
+					break
+				# resolve the HTTP redirect
+				o = urlparse.urlparse(urltoo, allow_fragments=True)
+				conn = httplib.HTTPConnection(o.netloc)
+				path = o.path
+				if o.query:
+					path +='?'+o.query
+				conn.request("HEAD", path)
+				res = conn.getresponse()
+				headers = dict(res.getheaders())
+				urltoo = headers['location']
+			#print "Resolved %s -> %s" % (urlfrm, urltoo)
+			string = string.replace(urlfrm, urltoo)
+	return string
 
 if __name__ == "__main__":
 	""" first, parse command-line arguments """
