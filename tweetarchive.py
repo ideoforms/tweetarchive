@@ -124,7 +124,6 @@ def resolve_urls(string):
 	"""Searches a string for URLs on a specific hostname (usually link-shorterning URLs)
 	and tries to resolve them, returning a modified string."""
 	for re in resolve_shorturl_regexes:
-		# find all matches, add each one to the map of urls to resolve as "a":"a"
 		while True:
 			amatch = re.search(string)
 			if not amatch: break
