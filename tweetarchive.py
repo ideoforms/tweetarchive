@@ -134,8 +134,7 @@ def resolve_urls(string):
 				iterdepth += 1
 				if iterdepth == 10:
 					print "Warning: too many redirects, giving up resolving %s" % urlfrm
-					urltoo = urlfrm
-					break
+					return string
 				# resolve the HTTP redirect
 				o = urlparse.urlparse(urltoo, allow_fragments=True)
 				conn = httplib.HTTPConnection(o.netloc)
