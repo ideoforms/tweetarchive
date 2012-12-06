@@ -9,15 +9,17 @@ tweetarchive: lightweight, pythonic twitter archiving.
 REQUIREMENTS
 -----------------------------------------------------------------------
 
-* tweepy
+* python-twitter-tools
    - for twitter API access
-     https://github.com/tweepy/tweepy
+     pip install twitter
+     http://mike.verdone.ca/twitter/
+
 * BeautifulSoup
    - for conversion to ASCII and HTML entity removal
+     pip install beautifulsoup
      http://www.crummy.com/software/BeautifulSoup/
   
 USAGE
-
 -----------------------------------------------------------------------
 * modify settings.py
 * ./tweetarchive.py [username]
